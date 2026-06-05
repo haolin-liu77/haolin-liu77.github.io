@@ -1,0 +1,35 @@
+{% include base_path %}
+{% assign section = include.section %}
+{% assign seen = "|" %}
+<ul class="wiki-tree">
+{% for doc in site.wiki | sort: 'path' %}
+  {% assign parts = doc.path | split: '/' %}
+  {% if parts[0] == section and parts.size >= 2 %}
+    {% assign sub = parts[1] %}
+    {% if sub != 'index' %}
+      {% assign token = "|" | append: sub | append: "|" %}
+      {% unless seen contains token %}
+        {% assign seen = seen | append: sub | append: "|" %}
+        {% assign subpath = section | append: '/' | append: sub %}
+        {% assign index_path = subpath | append: '/index' %}
+        {% assign sub_url = nil %}
+        {% assign sub_title = sub %}
+        {% for item in site.wiki %}
+          {% if item.path == subpath or item.path == index_path %}
+            {% assign sub_url = item.url %}
+            {% assign sub_title = item.title %}
+          {% endif %}
+        {% endfor %}
+        <li>
+          {% if sub_url %}
+            <a href="{{ base_path }}{{ sub_url }}">{{ sub_title }}</a>
+          {% else %}
+            {{ sub_title }}
+          {% endif %}
+        </li>
+      {% endunless %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+</ul>
+{% if seen == "|" %}<p><em>暂无子目录</em></p>{% endif %}

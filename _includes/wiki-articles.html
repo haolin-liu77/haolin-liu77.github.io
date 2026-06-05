@@ -1,0 +1,16 @@
+{% include base_path %}
+{% assign folder = include.folder %}
+{% assign prefix = folder | append: '/' %}
+{% assign count = 0 %}
+<ul class="wiki-tree">
+{% for doc in site.wiki | sort: 'title' %}
+  {% if doc.path contains prefix %}
+    {% assign rel = doc.path | split: prefix | last %}
+    {% unless rel contains '/' or rel == 'index' %}
+      {% assign count = count | plus: 1 %}
+      <li><a href="{{ base_path }}{{ doc.url }}">{{ doc.title }}</a></li>
+    {% endunless %}
+  {% endif %}
+{% endfor %}
+</ul>
+{% if count == 0 %}<p><em>暂无条目</em></p>{% endif %}
